@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteRule ^events$ api/events.php [L,QSA]
+RewriteRule ^campaigns/([^/]+)/stats$ api/stats.php?id=$1 [L,QSA]
