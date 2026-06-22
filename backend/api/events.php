@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Method Not Allowed']);
     exit;
 }
@@ -26,6 +27,7 @@ if (
     empty($data['type']) || 
     empty($data['timestamp'])
 ) {
+    http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
     exit;
 }
@@ -36,12 +38,14 @@ $type = trim($data['type']);
 $allowed_types = ['sent', 'opened', 'clicked', 'bounced'];
 
 if (!in_array($type, $allowed_types)) {
+    http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Invalid event type. Must be one of: sent, opened, clicked, bounced']);
     exit;
 }
 
 $timestamp_raw = strtotime($data['timestamp']);
 if ($timestamp_raw === false) {
+    http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Invalid ISO 8601 timestamp format']);
     exit;
 }
@@ -102,6 +106,7 @@ try {
     if ($pdo->inTransaction()) {
         $pdo->rollBack();
     }
+    http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => 'Ingestion transaction failed: ' . $e->getMessage()

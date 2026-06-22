@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
-  
+    http_response_code(405);
     echo json_encode(['success' => false, 'message' => 'Method Not Allowed']);
     exit;
 }
@@ -21,7 +21,7 @@ global $pdo;
 $id = isset($_GET['id']) ? trim($_GET['id']) : '';
 
 if (empty($id)) {
-
+    http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'Campaign ID is required']);
     exit;
 }
@@ -53,6 +53,7 @@ try {
     }
 
 } catch (\Exception $e) {
+    http_response_code(500);
     echo json_encode([
         'success' => false,
         'message' => 'Failed to retrieve stats: ' . $e->getMessage()
